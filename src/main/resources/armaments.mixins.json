@@ -5,9 +5,8 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"ItemEntityMixin",
-		"LightningEntityMixin",
+		"LightningBoltMixin",
 		"LivingEntityMixin",
-		"TridentEntityMixin",
 		"TridentItemMixin"
 	],
 	"client": [],

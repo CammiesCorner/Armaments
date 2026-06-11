@@ -4,16 +4,18 @@ import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.echos.Echo;
 import dev.cammiescorner.armaments.common.registry.ModStatusEffects;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class EchoComponent implements ServerTickingComponent {
 	private final LivingEntity entity;
@@ -28,7 +30,7 @@ public class EchoComponent implements ServerTickingComponent {
 		ServerLevel world = entity.getServer().getLevel(entity.level().dimension());
 
 		if(world != null) {
-			if(!entity.hasEffect(ModStatusEffects.ECHO.get())) {
+			if(!entity.hasEffect(ModStatusEffects.ECHO.holder())) {
 				echoes.clear();
 				return;
 			}
@@ -55,7 +57,7 @@ public class EchoComponent implements ServerTickingComponent {
 	}
 
 	@Override
-	public void readFromNbt(CompoundTag tag) {
+	public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
 		ListTag echoes = tag.getList("Echoes", Tag.TAG_COMPOUND);
 		this.echoes.clear();
 
@@ -66,7 +68,7 @@ public class EchoComponent implements ServerTickingComponent {
 	}
 
 	@Override
-	public void writeToNbt(CompoundTag tag) {
+	public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
 		ListTag echoes = new ListTag();
 
 		for(Echo echo : this.echoes) {

@@ -4,25 +4,27 @@ import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.common.items.*;
 import dev.upcraft.sparkweave.api.registry.RegistryHandler;
 import dev.upcraft.sparkweave.api.registry.RegistrySupplier;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
 import java.util.function.Supplier;
 
 public class ModItems {
 	public static final RegistryHandler<Item> ITEMS = RegistryHandler.create(Registries.ITEM, Armaments.MOD_ID);
 
-	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new FabricItemSettings()));
-	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new FabricItemSettings()));
+	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new Item.Properties()));
+	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new Item.Properties()));
 //	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new FabricItemSettings().maxCount(1)));
-	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new FabricItemSettings().stacksTo(1)));
+	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new Item.Properties().stacksTo(1)));
 //	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new FabricItemSettings().maxCount(1)));
-	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new FabricItemSettings().durability(64)));
+	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new Item.Properties().durability(64)));
 
 	public enum ToolMaterials implements Tier {
 		AMETHYST(1, 193, 5f, 7f, 22, () -> Ingredient.of(Items.AMETHYST_SHARD));
@@ -53,6 +55,11 @@ public class ModItems {
 
 		public float getAttackDamageBonus() {
 			return attackDamage;
+		}
+
+		@Override
+		public TagKey<Block> getIncorrectBlocksForDrops() {
+			return BlockTags.INCORRECT_FOR_STONE_TOOL;
 		}
 
 		public int getLevel() {

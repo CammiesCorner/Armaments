@@ -1,8 +1,6 @@
 package dev.cammiescorner.armaments.common.items;
 
 import dev.cammiescorner.armaments.common.registry.ModTags;
-import java.util.function.Predicate;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,6 +10,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+
+import java.util.function.Predicate;
 
 public class BlunderbussItem extends Item implements SpecialRenderItem {
 	private static final Predicate<ItemStack> AMMO = stack -> stack.is(ModTags.BLUNDERBUSS_AMMO);
@@ -27,7 +27,7 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 			if(!isLoaded(stack)) {
 				ItemStack propellant = findItem(player, PROPELLANT);
 
-				if(remainingUseTicks != getUseDuration(stack) && remainingUseTicks % 20 == 0 && (PROPELLANT.test(propellant) || player.isCreative())) {
+				if(remainingUseTicks != getUseDuration(stack, user) && remainingUseTicks % 20 == 0 && (PROPELLANT.test(propellant) || player.isCreative())) {
 					setCharge(stack, getCharge(stack) + 1);
 
 					if(!player.isCreative())
@@ -37,7 +37,7 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 				}
 			}
 			else {
-				stack.getOrCreateTag().putBoolean("Loaded", false);
+//				stack.getOrCreateTag().putBoolean("Loaded", false);
 				setCharge(stack, 0);
 			}
 		}
@@ -70,7 +70,7 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
 		return 72000;
 	}
 
@@ -96,23 +96,25 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 	}
 
 	public void loadGun(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putBoolean("Loaded", true);
+//		CompoundTag tag = stack.getOrCreateTag();
+//		tag.putBoolean("Loaded", true);
 	}
 
 	public boolean isLoaded(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		return tag.getBoolean("Loaded");
+//		CompoundTag tag = stack.getOrCreateTag();
+//		return tag.getBoolean("Loaded");
+		return false;
 	}
 
 	public void setCharge(ItemStack stack, int charge) {
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putInt("Charge", charge);
+//		CompoundTag tag = stack.getOrCreateTag();
+//		tag.putInt("Charge", charge);
 	}
 
 	public int getCharge(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		return tag.getInt("Charge");
+//		CompoundTag tag = stack.getOrCreateTag();
+//		return tag.getInt("Charge");
+		return 0;
 	}
 
 	public Predicate<ItemStack> getHeldProjectiles() {

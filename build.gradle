@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'idea'
 	id 'maven-publish'
 }
@@ -11,7 +11,6 @@ def buildNumber = !ENV.TAG ? ("${ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}" 
 
 version = (ENV.TAG ?: "${libs.versions.minecraft.get()}-development") + ((isPreviewBuild && !ENV.TAG) ? "+${buildNumber}" : "")
 group = project.maven_group
-archivesBaseName = project.archives_base_name
 
 loom {
 	mods {
@@ -26,7 +25,7 @@ loom {
 repositories {
 	maven {
 		name = "Team Resourceful"
-		url = "https://nexus.resourcefulbees.com/repository/maven-public/"
+		url = "https://maven.teamresourceful.com/repository/maven-releases"
 	}
 	maven {
 		name = "TerraformersMC"
@@ -79,13 +78,13 @@ java {
 
 jar {
 	from("LICENSE.md") {
-		rename { "LICENSE_${archivesBaseName}.md" }
+		rename { "LICENSE_${project.archives_base_name}.md" }
 	}
 
 	manifest.mainAttributes(
-		"Implementation-Title": project.archivesBaseName,
+		"Implementation-Title": project.archives_base_name,
 		"Implementation-Version": project.version,
-		"Maven-Artifact": "${project.group}:${project.archivesBaseName}:${project.version}".toLowerCase(Locale.ROOT),
+		"Maven-Artifact": "${project.group}:${project.archives_base_name}:${project.version}".toLowerCase(Locale.ROOT),
 		"Built-On-Minecraft": libs.versions.minecraft.get(),
 		"Built-On-Java": "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})"
 	)

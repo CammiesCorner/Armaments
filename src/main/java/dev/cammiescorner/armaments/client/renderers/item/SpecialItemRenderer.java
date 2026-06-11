@@ -28,7 +28,7 @@ public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicI
 	private BakedModel worldItemModel;
 
 	public SpecialItemRenderer(ResourceLocation itemId) {
-		this.id = new ResourceLocation(itemId.getNamespace(), itemId.getPath() + "_renderer");
+		this.id = ResourceLocation.fromNamespaceAndPath(itemId.getNamespace(), itemId.getPath() + "_renderer");
 		this.itemId = itemId;
 	}
 

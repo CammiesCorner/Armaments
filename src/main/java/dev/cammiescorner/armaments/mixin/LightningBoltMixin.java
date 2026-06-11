@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mixin(LightningBolt.class)
-public abstract class LightningEntityMixin {
+public abstract class LightningBoltMixin {
 	@Shadow @Nullable public abstract ServerPlayer getCause();
 
 	@Inject(method = "spawnFire", at = @At("HEAD"), cancellable = true)

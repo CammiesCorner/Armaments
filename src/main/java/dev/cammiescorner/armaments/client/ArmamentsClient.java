@@ -4,9 +4,9 @@ import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.client.models.armor.SeaCrownArmorModel;
 import dev.cammiescorner.armaments.client.renderers.armor.SeaCrownArmorRenderer;
 import dev.cammiescorner.armaments.client.renderers.item.SpecialItemRenderer;
-import dev.cammiescorner.armaments.common.components.item.CrystalSpearComponent;
+import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
 import dev.cammiescorner.armaments.common.items.SpecialRenderItem;
-import dev.cammiescorner.armaments.common.registry.ModComponents;
+import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import dev.cammiescorner.armaments.common.registry.ModItems;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.impl.client.rendering.ArmorRendererRegistryImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
@@ -31,9 +30,9 @@ public class ArmamentsClient implements ClientModInitializer {
 		ArmorRendererRegistryImpl.register(new SeaCrownArmorRenderer(), ModItems.SEA_CROWN.get());
 
 		ItemProperties.register(ModItems.CRYSTAL_SPEAR.get(), Armaments.id("charge"), (itemStack, clientWorld, livingEntity, i) -> {
-			CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(itemStack);
+			SpearChargeComponent component = itemStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
 
-			return component.getCharge() / 4f;
+			return component.charge() / 4f;
 		});
 
 		ModItems.ITEMS.stream().forEach(holder -> {
@@ -46,8 +45,8 @@ public class ArmamentsClient implements ClientModInitializer {
 				BuiltinItemRendererRegistry.INSTANCE.register(item, specialItemRenderer);
 
 				ModelLoadingPlugin.register(ctx -> ctx.addModels(
-					new ModelResourceLocation(id.withPath(id.getPath() + "_gui"), "inventory"),
-					new ModelResourceLocation(id.withPath(id.getPath() + "_handheld"), "inventory")
+					id.withPath(id.getPath() + "_gui"),
+					id.withPath(id.getPath() + "_handheld")
 				));
 			}
 		});

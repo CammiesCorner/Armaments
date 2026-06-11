@@ -61,10 +61,10 @@
 	"accessWidener": "armaments.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.9",
-		"minecraft": "=1.20.1",
+		"minecraft": "=1.21.1",
 		"java": ">=17",
 		"fabric-api": "*",
-		"sparkweave": ">=0.5.0 <0.100.0",
+		"sparkweave": ">=0.510.0",
 		"resourcefulconfig": "*",
 		"cardinal-components-base": "*",
 		"cardinal-components-item": "*",

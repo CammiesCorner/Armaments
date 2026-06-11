@@ -4,10 +4,11 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.components.entity.EchoComponent;
-import dev.cammiescorner.armaments.common.components.item.CrystalSpearComponent;
+import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
 import dev.cammiescorner.armaments.common.echos.Echo;
 import dev.cammiescorner.armaments.common.items.CrystalSpearItem;
 import dev.cammiescorner.armaments.common.registry.ModComponents;
+import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import dev.cammiescorner.armaments.common.registry.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -53,35 +54,36 @@ public abstract class LivingEntityMixin extends Entity {
 		if(level() instanceof ServerLevel world) {
 			if(getMainHandItem().getItem() instanceof CrystalSpearItem && isPassenger() && getControlledVehicle() instanceof AbstractHorse) {
 				ItemStack stack = getMainHandItem();
-				CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(stack);
+				var component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
 				long timer = world.getGameTime() - component.startTime();
 				int interval = ArmamentsConfig.CrystalSpear.chargeInterval;
 
 				if(zza > 0) {
-					if(component.getCharge() == 0 && component.startTime() + interval < world.getGameTime())
-						component.setStartTime(world.getGameTime());
+					if(component.charge() == 0 && component.startTime() + interval < world.getGameTime())
+						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, world.getGameTime()));
 
-					if(timer % interval == 0 && component.getCharge() < 4) {
-						component.setCharge(component.getCharge() + 1);
-						world.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 1f, component.getCharge() / 4f);
+					if(timer % interval == 0 && component.charge() < 4) {
+						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(component.charge() + 1, component.startTime()));
+						component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+						world.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 1f, component.charge() / 4f);
 
 						if(self instanceof Player player) {
 							String charge = "⬤";
 							String bar = "◯";
 
-							ChatFormatting formatting = switch(component.getCharge()) {
-								default -> ChatFormatting.RED;
+							ChatFormatting formatting = switch(component.charge()) {
 								case 2 -> ChatFormatting.GOLD;
 								case 3 -> ChatFormatting.YELLOW;
 								case 4 -> ChatFormatting.GREEN;
+								default -> ChatFormatting.RED;
 							};
 
-							player.displayClientMessage(Component.nullToEmpty(charge.repeat(component.getCharge()) + bar.repeat(4 - component.getCharge())).copy().withStyle(formatting), true);
+							player.displayClientMessage(Component.nullToEmpty(charge.repeat(component.charge()) + bar.repeat(4 - component.charge())).copy().withStyle(formatting), true);
 						}
 					}
 				}
-				else if(component.getCharge() > 0) {
-					component.setCharge(0);
+				else if(component.charge() > 0) {
+					stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, component.startTime()));
 					world.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 1f, 0f);
 
 					if(self instanceof Player player)
@@ -98,10 +100,10 @@ public abstract class LivingEntityMixin extends Entity {
 					if(!(stack.getItem() instanceof CrystalSpearItem))
 						continue;
 
-					CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(stack);
+					var component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
 
-					if((!player.getMainHandItem().equals(stack) || !player.isPassenger()) && component.getCharge() > 0)
-						component.setCharge(0);
+					if((!player.getMainHandItem().equals(stack) || !player.isPassenger()) && component.charge() > 0)
+						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, component.startTime()));
 				}
 			}
 		}
@@ -117,7 +119,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
 	private DamageSource changeEchoDaggerDamage(DamageSource source) {
-		if(!source.isIndirect() && source.getDirectEntity() instanceof LivingEntity attacker) {
+		if(source.isDirect() && source.getDirectEntity() instanceof LivingEntity attacker) {
 			ItemStack stack = attacker.getMainHandItem();
 
 			if(stack.is(ModItems.ECHO_DAGGER.get()))

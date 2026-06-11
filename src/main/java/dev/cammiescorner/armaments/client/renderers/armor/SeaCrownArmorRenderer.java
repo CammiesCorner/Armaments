@@ -21,7 +21,7 @@ public class SeaCrownArmorRenderer implements ArmorRenderer {
 	private SeaCrownArmorModel<LivingEntity> model;
 
 	@Override
-	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
+	public void render(PoseStack matrices, MultiBufferSource bufferSource, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
 		if(model == null)
 			model = new SeaCrownArmorModel<>(client.getEntityModels().bakeLayer(SeaCrownArmorModel.MODEL_LAYER));
 
@@ -29,6 +29,6 @@ public class SeaCrownArmorRenderer implements ArmorRenderer {
 		model.setAllVisible(true);
 		model.crown.visible = slot == EquipmentSlot.HEAD;
 
-		model.renderToBuffer(matrices, ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(TEXTURE), false, true), light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+		model.renderToBuffer(matrices, ItemRenderer.getArmorFoilBuffer(bufferSource, RenderType.armorCutoutNoCull(TEXTURE), true), light, OverlayTexture.NO_OVERLAY, 0xffffffff);
 	}
 }
