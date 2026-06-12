@@ -8,12 +8,12 @@ import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
 import dev.cammiescorner.armaments.common.items.SpecialRenderItem;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import dev.cammiescorner.armaments.common.registry.ModItems;
+import dev.upcraft.sparkweave.api.client.event.RegisterCustomArmorRenderersEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.impl.client.rendering.ArmorRendererRegistryImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,9 @@ public class ArmamentsClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		EntityModelLayerRegistry.registerModelLayer(SeaCrownArmorModel.MODEL_LAYER, SeaCrownArmorModel::getTexturedModelData);
 
-		ArmorRendererRegistryImpl.register(new SeaCrownArmorRenderer(), ModItems.SEA_CROWN.get());
+		RegisterCustomArmorRenderersEvent.EVENT.register(event ->
+			event.register(SeaCrownArmorRenderer::new, ModItems.SEA_CROWN)
+		);
 
 		ItemProperties.register(ModItems.CRYSTAL_SPEAR.get(), Armaments.id("charge"), (itemStack, clientWorld, livingEntity, i) -> {
 			SpearChargeComponent component = itemStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
