@@ -5,22 +5,21 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.cammiescorner.armaments.client.ArmamentsClient;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.Unit;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.Collection;
+import java.util.Set;
 
-public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer, IdentifiableResourceReloadListener {
+public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer, IdentifiableResourceReloadListener, SimpleSynchronousResourceReloadListener {
 	private final ResourceLocation id;
 	private final ResourceLocation itemId;
 	private ItemRenderer itemRenderer;
@@ -39,16 +38,15 @@ public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicI
 	}
 
 	@Override
-	public CompletableFuture<Void> reload(PreparationBarrier synchronizer, ResourceManager manager, ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-		return synchronizer.wait(Unit.INSTANCE).thenRunAsync(() -> {
-			applyProfiler.startTick();
-			applyProfiler.push("listener");
-			itemRenderer = ArmamentsClient.client.getItemRenderer();
-			inventoryItemModel = ArmamentsClient.client.getModelManager().getModel(new ModelResourceLocation(itemId.withPath(itemId.getPath() + "_gui"), "inventory"));
-			worldItemModel = ArmamentsClient.client.getModelManager().getModel(new ModelResourceLocation(itemId.withPath(itemId.getPath() + "_handheld"), "inventory"));
-			applyProfiler.pop();
-			applyProfiler.endTick();
-		}, applyExecutor);
+	public Collection<ResourceLocation> getFabricDependencies() {
+		return Set.of(ResourceReloadListenerKeys.MODELS);
+	}
+
+	@Override
+	public void onResourceManagerReload(ResourceManager resourceManager) {
+		itemRenderer = ArmamentsClient.client.getItemRenderer();
+		inventoryItemModel = ArmamentsClient.client.getModelManager().getModel(itemId.withPrefix("item/").withSuffix("_gui"));
+		worldItemModel = ArmamentsClient.client.getModelManager().getModel(itemId.withPrefix("item/").withSuffix("_handheld"));
 	}
 
 	@Override

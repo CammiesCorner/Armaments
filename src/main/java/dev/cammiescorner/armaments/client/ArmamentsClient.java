@@ -35,7 +35,6 @@ public class ArmamentsClient implements ClientModInitializer {
 			return component.charge() / 4f;
 		});
 
-		// TODO figure out why this isn't working
 		ModItems.ITEMS.stream().forEach(holder -> {
 			Item item = holder.get();
 
@@ -46,8 +45,8 @@ public class ArmamentsClient implements ClientModInitializer {
 				BuiltinItemRendererRegistry.INSTANCE.register(item, specialItemRenderer);
 
 				ModelLoadingPlugin.register(ctx -> ctx.addModels(
-					id.withPath("item/" + id.getPath() + "_gui"),
-					id.withPath("item/" + id.getPath() + "_handheld")
+					id.withPrefix("item/").withSuffix("_gui"),
+					id.withPrefix("item/").withSuffix("_handheld")
 				));
 			}
 		});

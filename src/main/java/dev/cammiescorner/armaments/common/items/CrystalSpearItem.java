@@ -4,17 +4,18 @@ import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,6 +23,36 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, FabricItem {
 	public CrystalSpearItem(Tier material, Properties settings) {
 		super(material, settings.attributes(createAttributes()));
+	}
+
+	@Override
+	public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
+		return 720000;
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+		player.startUsingItem(interactionHand);
+
+		return InteractionResultHolder.consume(player.getItemInHand(interactionHand));
+	}
+
+	@Override
+	public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int i) {
+		if(livingEntity.getControlledVehicle() instanceof AbstractHorse horse) {
+			var box = horse.getBoundingBox().expandTowards(0, livingEntity.getBbHeight(), 0).inflate(1);
+			var entities = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != livingEntity && entity != horse);
+			var damageSource = livingEntity instanceof Player player ? level.damageSources().playerAttack(player) : level.damageSources().mobAttack(livingEntity);
+
+			for(LivingEntity entity : entities) {
+				entity.hurt(damageSource, (float) livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE));
+			}
+		}
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack itemStack) {
+		return UseAnim.NONE;
 	}
 
 	@Override
@@ -46,10 +77,29 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 		return component.charge() != 0 && super.allowComponentsUpdateAnimation(player, hand, oldStack, newStack);
 	}
 
+	@Override
+	public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int i, boolean bl) {
+		var modifiers = itemStack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, createAttributes());
+		var builder = ItemAttributeModifiers.builder();
+
+		modifiers.forEach(EquipmentSlot.MAINHAND, (attributeHolder, attributeModifier) -> {
+			if(attributeHolder.is(Attributes.ATTACK_DAMAGE)) {
+				var component = itemStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+				var damage = 9 + (5 * component.charge());
+
+				builder.add(attributeHolder, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, damage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+			}
+			else {
+				builder.add(attributeHolder, attributeModifier, EquipmentSlotGroup.MAINHAND);
+			}
+		});
+
+		itemStack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
+	}
+
 	public static ItemAttributeModifiers createAttributes() {
 		var builder = ItemAttributeModifiers.builder();
 
-		// TODO figure out how to get the attack bonus based on charge
 		builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 9, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
 		builder.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
 

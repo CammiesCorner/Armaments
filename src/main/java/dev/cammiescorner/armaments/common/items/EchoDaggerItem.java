@@ -58,7 +58,6 @@ public class EchoDaggerItem extends Item {
 		return !miner.isCreative();
 	}
 
-	// TODO revamp this mess
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
 		ItemStack stack = user.getItemInHand(hand).copy();
