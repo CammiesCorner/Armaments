@@ -14,6 +14,7 @@
 
 	"config.armaments.sea_crown": "Sea Crown Settings",
 	"config.armaments.sea_crown.enables_riptide": "Allows Riptide out of water",
+	"config.armaments.sea_crown.riptide_cool_down": "Cool down for Riptide Tridents activated by Sea Crown",
 	"config.armaments.sea_crown.potion_amplifier": "Potion Amplifier",
 	"config.armaments.sea_crown.health_modifier": "Health Modifier",
 	"config.armaments.sea_crown.armor_points": "Armor Points",

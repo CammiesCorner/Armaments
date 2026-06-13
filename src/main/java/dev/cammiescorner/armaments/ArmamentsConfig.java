@@ -13,7 +13,7 @@ import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
 })
 public final class ArmamentsConfig {
 	@Category(
-		value = "seaCrownConfig"
+		value = "Sea Crown"
 	)
 	public static final class SeaCrown {
 		@ConfigEntry(
@@ -48,7 +48,7 @@ public final class ArmamentsConfig {
 	}
 
 	@Category(
-		value = "echoDaggerConfig"
+		value = "Echo Dagger"
 	)
 	public static final class EchoDagger {
 		@ConfigEntry(
@@ -72,7 +72,7 @@ public final class ArmamentsConfig {
 	}
 
 	@Category(
-		value = "crystalSpearConfig"
+		value = "Crystal Spear"
 	)
 	public static final class CrystalSpear {
 		@ConfigEntry(
@@ -83,7 +83,7 @@ public final class ArmamentsConfig {
 	}
 
 	@Category(
-		value = "goatHornConfig"
+		value = "Goat Horn"
 	)
 	public static final class GoatHorn {
 		@ConfigEntry(
