@@ -36,7 +36,7 @@ public class SeaCrownItem extends ArmorItem implements Equipable {
 		if(entity instanceof LivingEntity wearer && wearer.getItemBySlot(EquipmentSlot.HEAD) == stack) {
 			PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
 
-			if(contents != null && contents.potion().isPresent()) {
+			if(contents != null && contents.potion().isPresent() && world.getGameTime() % 80 == 0) {
 				for(MobEffectInstance effect : contents.potion().get().value().getEffects())
 					wearer.addEffect(new MobEffectInstance(effect.getEffect(), 100, Math.min(effect.getAmplifier(), ArmamentsConfig.SeaCrown.potionAmplifier), true, false, true));
 			}

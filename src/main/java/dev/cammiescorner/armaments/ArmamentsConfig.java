@@ -80,6 +80,12 @@ public final class ArmamentsConfig {
 			translation = "config." + Armaments.MOD_ID + ".crystal_spear.charge_interval"
 		)
 		public static int chargeInterval = 40;
+
+		@ConfigEntry(
+			id = "joustingCoolDown",
+			translation = "config." + Armaments.MOD_ID + ".crystal_spear.jousting_cool_down"
+		)
+		public static int joustingCoolDown = 60;
 	}
 
 	@Category(

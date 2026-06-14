@@ -24,6 +24,7 @@
 	"config.armaments.echo_dagger.potion_duration": "Echo potion effect duration",
 	"config.armaments.crystal_spear": "Crystal Spear Settings",
 	"config.armaments.crystal_spear.charge_interval": "Interval to gain one charge",
+	"config.armaments.crystal_spear.jousting_cool_down": "Cool down on Crystal Spear upon successful jousting hit",
 	"config.armaments.goat_horn": "Goat Horn Settings",
 	"config.armaments.goat_horn.speed_duration": "Speed effect duration",
 	"config.armaments.goat_horn.speed_amplifier": "Speed effect amplifier",

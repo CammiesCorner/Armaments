@@ -1,10 +1,13 @@
 package dev.cammiescorner.armaments.common.items;
 
+import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import net.fabricmc.fabric.api.item.v1.FabricItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -45,7 +48,28 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 			var damageSource = livingEntity instanceof Player player ? level.damageSources().playerAttack(player) : level.damageSources().mobAttack(livingEntity);
 
 			for(LivingEntity entity : entities) {
-				entity.hurt(damageSource, (float) livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE));
+				var hit = entity.hurt(damageSource, (float) livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE));
+
+				if(hit && livingEntity instanceof Player player) {
+					var component = itemStack.get(ModDataComponents.SPEAR_CHARGE.get());
+					var charge = component.charge() - 1;
+
+					player.getCooldowns().addCooldown(itemStack.getItem(), ArmamentsConfig.CrystalSpear.joustingCoolDown);
+					player.stopUsingItem();
+					itemStack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(charge, level.getGameTime()));
+
+					String s = "⬤";
+					String bar = "◯";
+
+					ChatFormatting formatting = switch(charge) {
+						case 2 -> ChatFormatting.GOLD;
+						case 3 -> ChatFormatting.YELLOW;
+						case 4 -> ChatFormatting.GREEN;
+						default -> ChatFormatting.RED;
+					};
+
+					player.displayClientMessage(Component.nullToEmpty(s.repeat(charge) + bar.repeat(4 - charge)).copy().withStyle(formatting), true);
+				}
 			}
 		}
 	}
