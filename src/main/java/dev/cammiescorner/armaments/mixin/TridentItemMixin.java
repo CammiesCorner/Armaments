@@ -28,7 +28,7 @@ public class TridentItemMixin {
 
 	@Inject(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;startAutoSpinAttack(IFLnet/minecraft/world/item/ItemStack;)V"))
 	private void riptideCoolDown(ItemStack itemStack, Level level, LivingEntity livingEntity, int i, CallbackInfo ci) {
-		if(ArmamentsConfig.SeaCrown.enablesRiptide && livingEntity instanceof Player player && player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.SEA_CROWN.get()))
+		if(ArmamentsConfig.SeaCrown.enablesRiptide && livingEntity instanceof Player player && player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.SEA_CROWN.get()) && !player.isInWaterOrRain())
 			player.getCooldowns().addCooldown(itemStack.getItem(), ArmamentsConfig.SeaCrown.riptideCoolDown);
 	}
 }
