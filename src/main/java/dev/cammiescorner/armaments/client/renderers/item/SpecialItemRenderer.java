@@ -55,7 +55,7 @@ public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicI
 		matrices.pushPose();
 		Lighting.setupForFlatItems();
 
-		if(mode != ItemDisplayContext.FIRST_PERSON_LEFT_HAND && mode != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND && mode != ItemDisplayContext.THIRD_PERSON_LEFT_HAND && mode != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+		if(mode != ItemDisplayContext.FIRST_PERSON_LEFT_HAND && mode != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND && mode != ItemDisplayContext.THIRD_PERSON_LEFT_HAND && mode != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND && mode != ItemDisplayContext.HEAD) {
 			itemRenderer.render(stack, mode, false, matrices, vertexConsumers, light, overlay, getModel(inventoryItemModel, stack));
 		}
 		else {
@@ -66,7 +66,15 @@ public class SpecialItemRenderer implements BuiltinItemRendererRegistry.DynamicI
 				default -> leftHanded = false;
 			}
 
+			matrices.pushPose();
+
+			if(mode == ItemDisplayContext.HEAD) {
+				matrices.translate(0, -0.25, 0);
+				matrices.scale(2, 2, 2);
+			}
+
 			itemRenderer.render(stack, mode, leftHanded, matrices, vertexConsumers, light, overlay, getModel(worldItemModel, stack));
+			matrices.popPose();
 		}
 	}
 
