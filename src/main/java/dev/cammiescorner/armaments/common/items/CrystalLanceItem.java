@@ -1,7 +1,7 @@
 package dev.cammiescorner.armaments.common.items;
 
 import dev.cammiescorner.armaments.ArmamentsConfig;
-import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
+import dev.cammiescorner.armaments.common.data_components.LanceChargeComponent;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.ChatFormatting;
@@ -23,8 +23,8 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, FabricItem {
-	public CrystalSpearItem(Tier material, Properties settings) {
+public class CrystalLanceItem extends TieredItem implements SpecialRenderItem, FabricItem {
+	public CrystalLanceItem(Tier material, Properties settings) {
 		super(material, settings.attributes(createAttributes()));
 	}
 
@@ -35,9 +35,19 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
-		player.startUsingItem(interactionHand);
+		var stack = player.getItemInHand(interactionHand);
 
-		return InteractionResultHolder.consume(player.getItemInHand(interactionHand));
+		player.startUsingItem(interactionHand);
+		stack.set(ModDataComponents.LANCE_JOUST.get(), true);
+
+		return InteractionResultHolder.consume(stack);
+	}
+
+	@Override
+	public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int i) {
+		itemStack.set(ModDataComponents.LANCE_JOUST.get(), false);
+
+		super.releaseUsing(itemStack, level, livingEntity, i);
 	}
 
 	@Override
@@ -48,27 +58,26 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 			var damageSource = livingEntity instanceof Player player ? level.damageSources().playerAttack(player) : level.damageSources().mobAttack(livingEntity);
 
 			for(LivingEntity entity : entities) {
-				var hit = entity.hurt(damageSource, (float) livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE));
+				if(livingEntity instanceof Player player && !player.getCooldowns().isOnCooldown(itemStack.getItem())) {
+					if(entity.hurt(damageSource, (float) livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
+						var component = itemStack.get(ModDataComponents.LANCE_CHARGE.get());
+						var charge = Math.max(component.charge() - 1, 0);
 
-				if(hit && livingEntity instanceof Player player) {
-					var component = itemStack.get(ModDataComponents.SPEAR_CHARGE.get());
-					var charge = component.charge() - 1;
+						player.getCooldowns().addCooldown(itemStack.getItem(), ArmamentsConfig.CrystalLance.joustingCoolDown);
+						itemStack.set(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(charge, level.getGameTime()));
 
-					player.getCooldowns().addCooldown(itemStack.getItem(), ArmamentsConfig.CrystalSpear.joustingCoolDown);
-					player.stopUsingItem();
-					itemStack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(charge, level.getGameTime()));
+						String s = "⬤";
+						String bar = "◯";
 
-					String s = "⬤";
-					String bar = "◯";
+						ChatFormatting formatting = switch(charge) {
+							case 2 -> ChatFormatting.GOLD;
+							case 3 -> ChatFormatting.YELLOW;
+							case 4 -> ChatFormatting.GREEN;
+							default -> ChatFormatting.RED;
+						};
 
-					ChatFormatting formatting = switch(charge) {
-						case 2 -> ChatFormatting.GOLD;
-						case 3 -> ChatFormatting.YELLOW;
-						case 4 -> ChatFormatting.GREEN;
-						default -> ChatFormatting.RED;
-					};
-
-					player.displayClientMessage(Component.nullToEmpty(s.repeat(charge) + bar.repeat(4 - charge)).copy().withStyle(formatting), true);
+						player.displayClientMessage(Component.nullToEmpty(s.repeat(charge) + bar.repeat(4 - charge)).copy().withStyle(formatting), true);
+					}
 				}
 			}
 		}
@@ -96,7 +105,7 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 
 	@Override
 	public boolean allowComponentsUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
-		var component = newStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+		var component = newStack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 
 		return component.charge() != 0 && super.allowComponentsUpdateAnimation(player, hand, oldStack, newStack);
 	}
@@ -108,7 +117,7 @@ public class CrystalSpearItem extends TieredItem implements SpecialRenderItem, F
 
 		modifiers.forEach(EquipmentSlot.MAINHAND, (attributeHolder, attributeModifier) -> {
 			if(attributeHolder.is(Attributes.ATTACK_DAMAGE)) {
-				var component = itemStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+				var component = itemStack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 				var damage = 9 + (5 * component.charge());
 
 				builder.add(attributeHolder, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, damage, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);

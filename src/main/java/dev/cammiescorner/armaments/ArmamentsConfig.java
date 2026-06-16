@@ -8,7 +8,7 @@ import com.teamresourceful.resourcefulconfig.api.annotations.ConfigOption;
 @Config(value = Armaments.MOD_ID, categories = {
 	ArmamentsConfig.SeaCrown.class,
 	ArmamentsConfig.EchoDagger.class,
-	ArmamentsConfig.CrystalSpear.class,
+	ArmamentsConfig.CrystalLance.class,
 	ArmamentsConfig.GoatHorn.class
 })
 public final class ArmamentsConfig {
@@ -33,6 +33,12 @@ public final class ArmamentsConfig {
 			translation = "config." + Armaments.MOD_ID + ".sea_crown.potion_amplifier"
 		)
 		public static int potionAmplifier = 1;
+
+		@ConfigEntry(
+			id = "potionDuration",
+			translation = "config." + Armaments.MOD_ID + ".sea_crown.potion_duration"
+		)
+		public static int potionDuration = 120;
 
 		@ConfigEntry(
 			id = "healthModifier",
@@ -68,24 +74,24 @@ public final class ArmamentsConfig {
 			id = "potionDuration",
 			translation = "config." + Armaments.MOD_ID + ".echo_dagger.potion_duration"
 		)
-		public static int potionDuration = 300;
+		public static int potionDuration = 200;
 	}
 
 	@Category(
-		value = "Crystal Spear"
+		value = "Crystal Lance"
 	)
-	public static final class CrystalSpear {
+	public static final class CrystalLance {
 		@ConfigEntry(
 			id = "chargeInterval",
-			translation = "config." + Armaments.MOD_ID + ".crystal_spear.charge_interval"
+			translation = "config." + Armaments.MOD_ID + ".crystal_lance.charge_interval"
 		)
 		public static int chargeInterval = 40;
 
 		@ConfigEntry(
 			id = "joustingCoolDown",
-			translation = "config." + Armaments.MOD_ID + ".crystal_spear.jousting_cool_down"
+			translation = "config." + Armaments.MOD_ID + ".crystal_lance.jousting_cool_down"
 		)
-		public static int joustingCoolDown = 60;
+		public static int joustingCoolDown = 30;
 	}
 
 	@Category(

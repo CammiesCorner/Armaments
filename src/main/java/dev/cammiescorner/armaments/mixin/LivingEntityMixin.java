@@ -4,9 +4,9 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.components.entity.EchoComponent;
-import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
+import dev.cammiescorner.armaments.common.data_components.LanceChargeComponent;
 import dev.cammiescorner.armaments.common.echos.Echo;
-import dev.cammiescorner.armaments.common.items.CrystalSpearItem;
+import dev.cammiescorner.armaments.common.items.CrystalLanceItem;
 import dev.cammiescorner.armaments.common.registry.ModComponents;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import dev.cammiescorner.armaments.common.registry.ModItems;
@@ -52,19 +52,19 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void tickRider(CallbackInfo info) {
 		if(level() instanceof ServerLevel world) {
-			if(getMainHandItem().getItem() instanceof CrystalSpearItem && isPassenger() && getControlledVehicle() instanceof AbstractHorse) {
+			if(getMainHandItem().getItem() instanceof CrystalLanceItem && isPassenger() && getControlledVehicle() instanceof AbstractHorse) {
 				ItemStack stack = getMainHandItem();
-				var component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+				var component = stack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 				long timer = world.getGameTime() - component.startTime();
-				int interval = ArmamentsConfig.CrystalSpear.chargeInterval;
+				int interval = ArmamentsConfig.CrystalLance.chargeInterval;
 
 				if(zza > 0) {
 					if(component.charge() == 0 && component.startTime() + interval < world.getGameTime())
-						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, world.getGameTime()));
+						stack.set(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, world.getGameTime()));
 
 					if(timer % interval == 0 && component.charge() < 4) {
-						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(component.charge() + 1, component.startTime()));
-						component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+						stack.set(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(component.charge() + 1, component.startTime()));
+						component = stack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 						world.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 1f, component.charge() / 4f);
 
 						if(self instanceof Player player) {
@@ -83,7 +83,7 @@ public abstract class LivingEntityMixin extends Entity {
 					}
 				}
 				else if(component.charge() > 0) {
-					stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, component.startTime()));
+					stack.set(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, component.startTime()));
 					world.playSound(null, getX(), getY(), getZ(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.NEUTRAL, 1f, 0f);
 
 					if(self instanceof Player player)
@@ -97,13 +97,13 @@ public abstract class LivingEntityMixin extends Entity {
 				for(int i = 0; i < inv.getContainerSize(); i++) {
 					ItemStack stack = inv.getItem(i);
 
-					if(!(stack.getItem() instanceof CrystalSpearItem))
+					if(!(stack.getItem() instanceof CrystalLanceItem))
 						continue;
 
-					var component = stack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+					var component = stack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 
 					if((!player.getMainHandItem().equals(stack) || !player.isPassenger()) && component.charge() > 0)
-						stack.set(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, component.startTime()));
+						stack.set(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, component.startTime()));
 				}
 			}
 		}

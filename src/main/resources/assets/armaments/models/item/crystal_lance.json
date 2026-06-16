@@ -1,0 +1,14 @@
+{
+	"parent": "minecraft:builtin/entity",
+	"base": {
+		"parent": "armaments:item/crystal_lance_handheld"
+	},
+	"perspectives": {
+		"gui": {
+			"parent": "armaments:item/crystal_lance_gui"
+		},
+		"fixed": {
+			"parent": "armaments:item/crystal_lance_gui"
+		}
+	}
+}

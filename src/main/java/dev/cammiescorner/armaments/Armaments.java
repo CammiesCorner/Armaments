@@ -51,7 +51,7 @@ public class Armaments implements ModInitializer {
 
 		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
 			entries.addAfter(Items.TURTLE_HELMET, ModItems.SEA_CROWN.get());
-			entries.addAfter(Items.MACE, ModItems.CRYSTAL_SPEAR.get(), ModItems.ECHO_DAGGER.get(), ModItems.ELDER_GUARDIAN_SPIKE.get());
+			entries.addAfter(Items.MACE, ModItems.CRYSTAL_LANCE.get(), ModItems.ECHO_DAGGER.get(), ModItems.ELDER_GUARDIAN_SPIKE.get());
 //			entries.addAfter(Items.CROSSBOW, ModItems.BLUNDERBUSS.get());
 		});
 

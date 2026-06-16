@@ -10,7 +10,9 @@
 		"PlayerMixin",
 		"TridentItemMixin"
 	],
-	"client": [],
+	"client": [
+		"client.ItemInHandRendererMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	}

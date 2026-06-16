@@ -4,7 +4,7 @@ import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.client.models.armor.SeaCrownArmorModel;
 import dev.cammiescorner.armaments.client.renderers.armor.SeaCrownArmorRenderer;
 import dev.cammiescorner.armaments.client.renderers.item.SpecialItemRenderer;
-import dev.cammiescorner.armaments.common.data_components.SpearChargeComponent;
+import dev.cammiescorner.armaments.common.data_components.LanceChargeComponent;
 import dev.cammiescorner.armaments.common.items.SpecialRenderItem;
 import dev.cammiescorner.armaments.common.registry.ModDataComponents;
 import dev.cammiescorner.armaments.common.registry.ModItems;
@@ -31,8 +31,8 @@ public class ArmamentsClient implements ClientModInitializer {
 			event.register(SeaCrownArmorRenderer::new, ModItems.SEA_CROWN)
 		);
 
-		ItemProperties.register(ModItems.CRYSTAL_SPEAR.get(), Armaments.id("charge"), (itemStack, clientWorld, livingEntity, i) -> {
-			SpearChargeComponent component = itemStack.getOrDefault(ModDataComponents.SPEAR_CHARGE.get(), new SpearChargeComponent(0, 0));
+		ItemProperties.register(ModItems.CRYSTAL_LANCE.get(), Armaments.id("charge"), (itemStack, clientWorld, livingEntity, i) -> {
+			LanceChargeComponent component = itemStack.getOrDefault(ModDataComponents.LANCE_CHARGE.get(), new LanceChargeComponent(0, 0));
 
 			return component.charge() / 4f;
 		});

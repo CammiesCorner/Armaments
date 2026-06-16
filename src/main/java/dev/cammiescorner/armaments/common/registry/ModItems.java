@@ -20,7 +20,7 @@ public class ModItems {
 	public static final RegistryHandler<Item> ITEMS = RegistryHandler.create(Registries.ITEM, Armaments.MOD_ID);
 
 	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new Item.Properties().stacksTo(1)));
-	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new Item.Properties()));
+	public static final RegistrySupplier<Item> CRYSTAL_LANCE = ITEMS.register("crystal_lance", () -> new CrystalLanceItem(ToolMaterials.AMETHYST, new Item.Properties()));
 //	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new FabricItemSettings().maxCount(1)));
 	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new Item.Properties().stacksTo(1)));
 //	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new FabricItemSettings().maxCount(1)));
